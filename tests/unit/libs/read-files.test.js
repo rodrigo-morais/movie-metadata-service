@@ -30,6 +30,12 @@ describe('loadMovie', () => {
     }\
   }'
 
+  it('calls fs readFileSync', () => {
+    loadMovie('99999')
+
+    expect(fs.readFileSync).toHaveBeenCalledTimes(1)
+  })
+
   describe('when file exist', () => {
     beforeEach(() => {
       jest.resetAllMocks()

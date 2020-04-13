@@ -3,8 +3,8 @@ const router = express.Router()
 const { getMovieById } = require('../services/movie')
 
 router
-  .get('/:id', (req, res) =>
-    res.send(getMovieById(req.params.id))
+  .get('/:id', async (req, res) =>
+    res.send(await getMovieById(req.params.id))
   )
 
 module.exports = router
