@@ -1,21 +1,30 @@
 const { loadMovie, loadMovies } = require('../libs/read-files')
 const { fetchMovie } = require('../libs/fetch-data')
 const { mergeMovie } = require('../libs/merge-movies')
+const NodeCache = require('node-cache')
+const localCache = new NodeCache()
 
 const getMovieById = async (id) => {
-  const localData = loadMovie(id)
-
-  if (localData === null) { return null }
-
-  const imdbId = localData.imdbId
-  const omdbData = await fetchMovie(imdbId)
-  const isValidResponse = omdbData.Response
-
-
-  if (isValidResponse) {
-    return mergeMovie(localData, omdbData)
+  if (localCache.has(id)) {
+    return localCache.get(id)
   } else {
-    return localData
+    const localData = loadMovie(id)
+
+    if (localData === null) { return null }
+
+    const imdbId = localData.imdbId
+    const omdbData = await fetchMovie(imdbId)
+    const isValidResponse = omdbData.Response
+
+    let movie = null
+    if (isValidResponse) {
+      movie = mergeMovie(localData, omdbData)
+    } else {
+      movie = localData
+    }
+
+    localCache.set(id, movie)
+    return movie
   }
 }
 
@@ -28,17 +37,25 @@ const filterMovie = (searchKey, searchValue, shouldReturnKeyMissing = false) => 
 }
 
 const searchMovies = async (searchKey, searchValue) => {
-  const localData = loadMovies()
+  if (localCache.has('all')) {
+    const movieIds = localCache.get('all')
+    const movies = Object.values(localCache.mget(movieIds))
 
-  if (localData === null) { return null }
+    return (!!searchKey ? movies.filter(filterMovie(searchKey, searchValue)) : movies)
+  } else {
+    const localData = loadMovies()
 
-  const mergedData = (await Promise.all(
-    localData
-      .filter(filterMovie(searchKey, searchValue, true))
-      .map(async movie => mergeMovie(movie, await fetchMovie(movie.imdbId)))
-  ))
+    if (localData === null) { return null }
+
+    const mergedData = (await Promise.all(
+      localData
+        .filter(filterMovie(searchKey, searchValue, true))
+        .map(async movie => mergeMovie(movie, await fetchMovie(movie.imdbId)))
+    ))
   
-  return (!!searchKey ? mergedData.filter(filterMovie(searchKey, searchValue)) : mergedData)
+    localCache.set('all', mergedData.map(movie => { localCache.set(movie.id, movie); return movie.id }));
+    return (!!searchKey ? mergedData.filter(filterMovie(searchKey, searchValue)) : mergedData)
+  }
 }
 
 module.exports = {
