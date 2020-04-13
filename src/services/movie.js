@@ -8,7 +8,7 @@ const getMovieById = async (id) => {
   if (localCache.has(id)) {
     return localCache.get(id)
   } else {
-    const localData = loadMovie(id)
+    const localData = await loadMovie(id)
 
     if (localData === null) { return null }
 
@@ -43,7 +43,7 @@ const searchMovies = async (searchKey, searchValue) => {
 
     return (!!searchKey ? movies.filter(filterMovie(searchKey, searchValue)) : movies)
   } else {
-    const localData = loadMovies()
+    const localData = await loadMovies()
 
     if (localData === null) { return null }
 

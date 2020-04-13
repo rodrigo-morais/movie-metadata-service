@@ -36,8 +36,9 @@ describe('loadMovie', () => {
     }\
   }'
 
-  it('calls fs readFileSync', () => {
-    loadMovie('99999')
+  it('calls fs readFileSync', async () => {
+    fs.readFileSync.mockReset()
+    await loadMovie('99999')
 
     expect(fs.readFileSync).toHaveBeenCalledTimes(1)
   })
@@ -48,11 +49,12 @@ describe('loadMovie', () => {
       fs.readFileSync.mockReturnValue(movieMetadata)
     })
 
-    it('returns a JSON file with movie metadata', () => {
+    it('returns a JSON file with movie metadata', async () => {
       const movieId = '11043689'
       const result = JSON.parse(movieMetadata)
+      const expected = await loadMovie(movieId)
 
-      expect(loadMovie(movieId)).toStrictEqual(result)
+      expect(expected).toStrictEqual(result)
     })
   })
 
@@ -61,8 +63,9 @@ describe('loadMovie', () => {
       jest.resetAllMocks()
     })
 
-    it('returns null', () => {
-      expect(loadMovie('invalid')).toBeNull()
+    it('returns null', async () => {
+      const expected = await loadMovie('invalid')
+      expect(expected).toBeNull()
     })
   })
 })
@@ -86,14 +89,16 @@ describe('loadMovies', () => {
     })
   })
 
-  it('calls fs readdirSync', () => {
-    loadMovies()
+  it('calls fs readdirSync', async () => {
+    await loadMovies()
 
     expect(fs.readdirSync).toHaveBeenCalledTimes(1)
     expect(fs.readFileSync).toHaveBeenCalledTimes(2)
   })
 
-  it('returns all movies', () => {
-    expect(loadMovies()).toStrictEqual(all)
+  it('returns all movies', async () => {
+    const expected = await loadMovies()
+
+    expect(expected).toStrictEqual(all)
   })
 })

@@ -4,7 +4,7 @@
   "description": "An API to search movies metadata",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon ./src/api/server.js",
+    "start": "nodemon ./api/server.js",
     "test": "jest"
   },
   "repository": {
@@ -27,6 +27,7 @@
     "nodemon": "^2.0.2"
   },
   "dependencies": {
+    "aws-sdk": "^2.656.0",
     "axios": "^0.19.2",
     "body-parser": "^1.19.0",
     "dotenv": "^8.2.0",
