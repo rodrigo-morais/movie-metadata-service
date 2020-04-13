@@ -1,7 +1,13 @@
-const fs = require('fs')
-const {loadMovie} = require('../../../src/libs/read-files')
+const mockReaddirSync = jest.fn()
+const mockReadFileSync = jest.fn()
+const mockFs = {
+  readdirSync: mockReaddirSync,
+  readFileSync: mockReadFileSync
+}
+jest.mock('fs', () => mockFs)
 
-jest.mock('fs')
+const fs = require('fs')
+const { loadMovie, loadMovies } = require('../../../src/libs/read-files')
 
 describe('loadMovie', () => {
   const movieMetadata = '{\
@@ -58,5 +64,36 @@ describe('loadMovie', () => {
     it('returns null', () => {
       expect(loadMovie('invalid')).toBeNull()
     })
+  })
+})
+
+describe('loadMovies', () => {
+  const a = '{"a": 1, "b": 2}'
+  const b = '{"a": 5, "b": 2, "c": 2}'
+  const all = [JSON.parse(a), JSON.parse(b)]
+
+  beforeEach(() => {
+    mockReaddirSync.mockReset()
+    mockReadFileSync.mockReset()
+
+    mockReaddirSync.mockImplementation(() => ['a.json', 'b.json'])
+    mockReadFileSync.mockImplementation((file) => {
+      if (file === './movies/a.json') {
+        return a
+      } else {
+        return b
+      }
+    })
+  })
+
+  it('calls fs readdirSync', () => {
+    loadMovies()
+
+    expect(fs.readdirSync).toHaveBeenCalledTimes(1)
+    expect(fs.readFileSync).toHaveBeenCalledTimes(2)
+  })
+
+  it('returns all movies', () => {
+    expect(loadMovies()).toStrictEqual(all)
   })
 })

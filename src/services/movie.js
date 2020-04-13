@@ -2,8 +2,6 @@ const { loadMovie } = require('../libs/read-files')
 const { fetchMovie } = require('../libs/fetch-data')
 const { mergeMovie } = require('../libs/merge-movies')
 
-
-
 const getMovieById = async (id) => {
   const localData = loadMovie(id)
 
