@@ -1,0 +1,37 @@
+{
+  "name": "movie-metadata-service",
+  "version": "1.0.0",
+  "description": "An API to search movies metadata",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon ./api/server.js",
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/joyn-engineering/movie-metadata-service-rodrigo-morais.git"
+  },
+  "keywords": [
+    "movies",
+    "metadata",
+    "search"
+  ],
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/joyn-engineering/movie-metadata-service-rodrigo-morais/issues"
+  },
+  "homepage": "https://github.com/joyn-engineering/movie-metadata-service-rodrigo-morais#readme",
+  "devDependencies": {
+    "jest": "^25.2.7",
+    "nodemon": "^2.0.2"
+  },
+  "dependencies": {
+    "aws-sdk": "^2.656.0",
+    "axios": "^0.19.2",
+    "body-parser": "^1.19.0",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "node-cache": "^5.1.0"
+  }
+}

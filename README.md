@@ -96,3 +96,92 @@ You will be evaluated by a number of criteria, among others:
 
 
 ### Good luck
+
+
+
+## Solution
+
+
+#### Test application
+
+Execute the commands:
+
+```
+npm install
+npm test
+```
+
+
+### REST API
+
+
+#### Run application
+
+To run the application these are the following steps:
+
+1 - Create a .env file
+
+```
+OMDB_URL=http://www.omdbapi.com
+API_KEY=YOUR_API_KEY_TO_OMDb
+FILE_SOURCE=LOCAL
+S3_BUCKET=S3_BUCKET_NAME
+```
+
+2 - Execute the commands
+
+```
+npm install
+npm start
+```
+
+The endpoints can be accessed via:
+
+get movie  => http://localhost:3000/api/movies/{id} => E.g.: http://localhost:3000/api/movies/11043689
+get movies => http://localhost:3000/api/movies      => E.g.: http://localhost:3000/api/movies?studios=Paramount
+
+
+### Lambda Function
+
+Inside the terraform directory follow the steps below:
+
+1 - Create a S3 bucket in AWS Console
+
+2 - Copy all files from `./movies` to the new S3 bucket
+
+3 - Set up the environmental variables for AWS credentials
+
+```
+export AWS_ACCESS_KEY_ID=YOUR_ACCESS_KEY_ID
+export AWS_SECRET_KEY=YOUR_SECRET_KEY
+```
+
+4 - Create terraform.tfvars file
+
+```
+omdb_url    = "http://www.omdbapi.com"
+api_key     = "YOUR_API_KEY_TO_OMDb"
+file_source = "S3"
+s3_bucket   = "S3_BUCKET_NAME"
+```
+
+5 - Create zip file with source code
+
+```
+zip -r joyn.zip ./*.js ../node_modules ../src
+```
+
+6 - Install and execute terraform
+
+```
+brew install terraform
+terraform init
+terraform plan
+terraform apply
+```
+
+The execution of `terraform apply` will have an output with the URL to access the application.
+There is an application running in AWS that cab be tested with this URL: https://by5jcwl633.execute-api.us-east-1.amazonaws.com/prod
+
+get movie  => https://by5jcwl633.execute-api.us-east-1.amazonaws.com/prod/api/movies/{id} => E.g.: https://by5jcwl633.execute-api.us-east-1.amazonaws.com/prod/api/movies/11043689
+get movies => https://by5jcwl633.execute-api.us-east-1.amazonaws.com/prod/api/movies      => E.g.: https://by5jcwl633.execute-api.us-east-1.amazonaws.com/prod/api/movies?studios=Paramount
